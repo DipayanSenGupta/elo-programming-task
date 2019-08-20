@@ -37,7 +37,8 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $item = Item::create($request->input());
-        return response()->json($item);    }
+        return response()->json($item);
+    }
 
     /**
      * Display the specified resource.
@@ -47,8 +48,9 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
+
         return response()->json($item);
-    }    
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -73,7 +75,14 @@ class ItemController extends Controller
         $item->name = $request->name;
         $item->price = $request->price;
         $item->save();
-        return response()->json($item);    }
+        return response()->json([
+            'id' => $item->id,
+            'name' => $item->name,
+            'price' => $item->price,
+            'category_name' => $item->category->name,
+            'category_aisle' => $item->category->aisle
+        ]);
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -84,6 +93,5 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         $item->delete();
-
     }
 }

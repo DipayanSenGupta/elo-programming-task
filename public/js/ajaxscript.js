@@ -17,13 +17,12 @@ $(document).ready(function(){
     //display modal form for product EDIT ***************************
     $(document).on('click','.open_modal',function(){
         var product_id = $(this).val();
-       console.log(product_id);
         // Populate Data in Edit Modal Form
         $.ajax({
             type: "GET",
             url: url + '/' + product_id,
             success: function (data) {
-                console.log(data);
+
                 $('#product_id').val(data.id);
                 $('#name').val(data.name);
                 $('#price').val(data.price);
@@ -51,7 +50,6 @@ $(document).ready(function(){
             name: $('#name').val(),
             price: $('#price').val(),
         }
-
         //used to determine the http verb to use [add=POST], [update=PUT]
         var state = $('#btn-save').val();
         var type = "POST"; //for creating new resource
@@ -61,7 +59,6 @@ $(document).ready(function(){
             type = "PUT"; //for updating existing resource
             my_url += '/' + product_id;
         }
-        console.log(formData);
         $.ajax({
             type: type,
             url: my_url,
@@ -69,7 +66,10 @@ $(document).ready(function(){
             dataType: 'json',
             success: function (data) {
                 console.log(data);
-                var product = '<tr id="product' + data.id + '"><td>' + data.id + '</td><td>' + data.name + '</td><td>' + data.price + '</td>';
+                var product = '<tr id="product' + data.id + '"><td>' + data.id + '</td>'
+                product+= '<td>' + data.name + '</td><td>' + data.price + '</td>';
+                product+= '<td>' + data.category_name + '</td><td>' + data.category_aisle + '</td>';
+
                 product += '<td><button class="btn btn-warning btn-detail open_modal" value="' + data.id + '">Edit</button>';
                 product += ' <button class="btn btn-danger btn-delete delete-product" value="' + data.id + '">Delete</button></td></tr>';
                 if (state == "add"){ //if user added a new record
