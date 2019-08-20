@@ -93,8 +93,8 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="btn-save" value="add">Save Changes</button>
-                <input type="hidden" id="product_id" name="product_id" value="0">
-              </div>
+                <input type="hidden" id="product_id" name="product_id" value="0">  
+            </div>
             </div>
           </div>
         </div>
