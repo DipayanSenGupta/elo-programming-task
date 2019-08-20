@@ -62,7 +62,8 @@
                     </table> 
                 </div>
             </div>
-        </div>
+            {{ $items->links() }}
+          </div>
 
         <!-- Passing BASE URL to AJAX -->
         <input id="url" type="hidden" value="{{ \Request::url() }}">
