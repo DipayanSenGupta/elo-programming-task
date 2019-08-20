@@ -14,7 +14,8 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
+        $items = Item::all();
+        return view('index')->with('items', $items);
     }
 
     /**
@@ -35,8 +36,8 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $item = Item::create($request->input());
+        return response()->json($item);    }
 
     /**
      * Display the specified resource.
@@ -46,8 +47,8 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        //
-    }
+        return response()->json($item);
+    }    
 
     /**
      * Show the form for editing the specified resource.
@@ -69,8 +70,10 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
-        //
-    }
+        $item->name = $request->name;
+        $item->price = $request->price;
+        $item->save();
+        return response()->json($item);    }
 
     /**
      * Remove the specified resource from storage.
@@ -80,6 +83,7 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        //
+        $item->delete();
+
     }
 }
