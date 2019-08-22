@@ -1,5 +1,3 @@
-# Laravel Ajax CRUD
-
 This is a simple implementation of Grocery Management System. 
 
 # Installation
