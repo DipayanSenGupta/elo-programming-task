@@ -1,12 +1,12 @@
 
-$(document).ready(function(){
+$(document).ready(function () {
 
     //get base URL *********************
     var url = $('#url').val();
 
 
     //display modal form for creating new product *********************
-    $('#btn_add').click(function(){
+    $('#btn_add').click(function () {
         $('#btn-save').val("add");
         $('#frmProducts').trigger("reset");
         $('#myModal').modal('show');
@@ -15,12 +15,12 @@ $(document).ready(function(){
 
 
     //display modal form for product EDIT ***************************
-    $(document).on('click','.open_modal',function(){
+    $(document).on('click', '.open_modal', function () {
         var product_id = $(this).val();
         // Populate Data in Edit Modal Form
         $.ajax({
             type: "GET",
-            url: url + '/' + product_id,
+            url: url + '/' + product_id+'/edit',
             success: function (data) {
 
                 $('#product_id').val(data.id);
@@ -45,7 +45,7 @@ $(document).ready(function(){
             }
         })
 
-        e.preventDefault(); 
+        e.preventDefault();
         var formData = {
             name: $('#name').val(),
             price: $('#price').val(),
@@ -55,7 +55,7 @@ $(document).ready(function(){
         var type = "POST"; //for creating new resource
         var product_id = $('#product_id').val();;
         var my_url = url;
-        if (state == "update"){
+        if (state == "update") {
             type = "PUT"; //for updating existing resource
             my_url += '/' + product_id;
         }
@@ -67,15 +67,15 @@ $(document).ready(function(){
             success: function (data) {
                 console.log(data);
                 var product = '<tr id="product' + data.id + '"><td>' + data.id + '</td>'
-                product+= '<td>' + data.name + '</td><td>' + data.price + '</td>';
-                product+= '<td>' + data.category_name + '</td><td>' + data.category_aisle + '</td>';
+                product += '<td>' + data.name + '</td><td>' + data.price + '</td>';
+                product += '<td>' + data.category_name + '</td><td>' + data.category_aisle + '</td>';
 
                 product += '<td><button class="btn btn-warning btn-detail open_modal" value="' + data.id + '">Edit</button>';
                 product += ' <button class="btn btn-danger btn-delete delete-product" value="' + data.id + '">Delete</button></td></tr>';
-                if (state == "add"){ //if user added a new record
+                if (state == "add") { //if user added a new record
                     $('#products-list').append(product);
-                }else{ //if user updated an existing record
-                    $("#product" + product_id).replaceWith( product );
+                } else { //if user updated an existing record
+                    $("#product" + product_id).replaceWith(product);
                 }
                 $('#frmProducts').trigger("reset");
                 $('#myModal').modal('hide')
@@ -88,9 +88,9 @@ $(document).ready(function(){
 
 
     //delete product and remove it from TABLE list ***************************
-    $(document).on('click','.delete-product',function(){
+    $(document).on('click', '.delete-product', function () {
         var product_id = $(this).val();
-         $.ajaxSetup({
+        $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
             }
@@ -107,5 +107,35 @@ $(document).ready(function(){
             }
         });
     });
-    
+
+
+    fetch_customer_data();
+
+    var query = null;
+    var query1 = null;
+    function fetch_customer_data(query = '',query1 = ''){
+    var my_url = $('#url').val();
+
+    $.ajax({
+      url: my_url+'/action',
+      method:'GET',
+      data:{query:query,query1:query1},
+      dataType:'json',
+      success:function(data)
+      {
+       $('#products-list').html(data.table_data);
+       $('#sel1').html(data.aisles);
+      }
+     })
+    }
+   
+    $(document).on('keyup', '#search', function(){
+     var query = $(this).val();
+     fetch_customer_data(query,query1);
+    });
+
+    $(document).on('change', '#sel1', function(){
+        var query1 = $(this).val();
+        fetch_customer_data(query,query1);
+       });
 });

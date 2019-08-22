@@ -11,18 +11,21 @@
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
 
 Auth::routes();
 
-// Route::get('/home', 'HomeController@index')->name('home');
 
 Route::middleware(['auth'])->group(function () {
 
 	Route::get('/', function(){
-		return redirect()->route('index');
+		return redirect()->route('items.index');
     });
-    Route::resource('items','ItemController');
+    Route::get('items', 'ItemController@index')->name('items.index'); 
+    Route::post('items', 'ItemController@store')->name('items.store'); 
+    Route::get('items/{item}/edit', 'ItemController@edit')->name('items.edit');
+    Route::put('items/{item}', 'ItemController@update')->name('items.update');
+    Route::delete('items/{item}', 'ItemController@destroy')->name('items.destroy');
+    Route::get('items/action', 'ItemController@action')->name('items.action');
+
 });
