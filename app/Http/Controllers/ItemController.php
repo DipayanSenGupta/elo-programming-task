@@ -29,7 +29,7 @@ class ItemController extends Controller
                 if ($query != '') {
                     $data = DB::table('items')
                         ->join('categories', 'items.category_id', '=', 'categories.id')
-                        ->where('items.price', '>', $query)
+                        ->where('items.price', '<=', $query)
                         ->select('items.id', 'items.name', 'items.price', 'categories.name AS c_name', 'categories.aisle')
                         ->get();;
                 } elseif ($query1 != '') {
@@ -48,7 +48,7 @@ class ItemController extends Controller
                 $data = DB::table('items')
                     ->join('categories', 'items.category_id', '=', 'categories.id')
                     ->where('categories.aisle', '=', $query1)
-                    ->where('items.price', '>', $query)
+                    ->where('items.price', '<=', $query)
                     ->select('items.id', 'items.name', 'items.price', 'categories.name AS c_name', 'categories.aisle')
                     ->get();;
             }

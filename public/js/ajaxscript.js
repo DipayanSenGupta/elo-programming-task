@@ -41,7 +41,7 @@ $(document).ready(function () {
     $("#btn-save").click(function (e) {
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         })
 
@@ -92,7 +92,7 @@ $(document).ready(function () {
         var product_id = $(this).val();
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         })
         $.ajax({
