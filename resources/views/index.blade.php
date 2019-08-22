@@ -45,4 +45,3 @@
 <!-- Passing BASE URL to AJAX -->
 <input id="url" type="hidden" value="{{ \Request::url() }}">
 @endsection
-@include('parts.modals')

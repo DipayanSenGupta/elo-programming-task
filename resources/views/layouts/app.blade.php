@@ -79,12 +79,13 @@
             </div>
         </nav>
 
-        <main class="py-4">
-            @yield('content')
-        </main>
-    </div>
+        <div class="content">
+            <div class="container">
+                @yield('content')
+            </div>
+        </div> 
 
-
+        @include('parts.modals')
 </body>
 
 </html>

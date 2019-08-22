@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    protected $toTruncate = ['items','categories'];
+    protected $toTruncate = ['items','categories','users'];
     public function run()
     {
         Model::unguard();
