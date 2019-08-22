@@ -32,14 +32,9 @@
                     <input type="text" name="search" id="search" class="form-control" placeholder="put max item price" />
                 </div>
                 <div class="form-group">
-                    <label for="sel1">Select Aisle:</label>
+                    <label for="sel1" >Select Aisle:</label>
                     <select class="form-control" id="sel1">
-                    <!-- @foreach ($items as $item)
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                    @endforeach -->
+
                     </select>
                 </div>
             </div>
@@ -55,11 +50,11 @@
                 <table class="table table-striped table-hover ">
                     <thead>
                         <tr class="info">
-                            <!-- <th>ID </th> -->
+                            <th>ID </th>
                             <th>Name</th>
                             <th>Price</th>
-                            <!-- <th>Category</th> -->
-                            <!-- <th>Aisle</th> -->
+                            <th>Category</th>
+                            <th>Aisle</th>
                             <th>Actions</th>
                         </tr>
                     </thead>

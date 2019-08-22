@@ -14,149 +14,110 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-
-        // $sortBy = $request->sortBy;
-
-        // DB::table('items')
-        // ->join('categories', function($join)
-        // {
-        //     $join->on('categories.id', '=', 'items.category_id')
-        //          ->where('categories.aisle', '=', sortBy);
-        // })
-        // ->select('items.id', 'items.name', 'items.price','categories.aisle','categories.name')
-        // ->get();
-
-        $aisle = [];
-        $categories = Category::all();
-        foreach ($categories as $category) {
-            array_push($aisle, $category->aisle);
-        }
-        $aisle = array_unique($aisle);
-        sort($aisle);
-        $sortBy = '';
-        $items = Item::paginate(20);
-        return view('index')->with('items', $items)->with('aisles', $aisle)->with('sortBy', $sortBy);
+        return view('index');
     }
 
     function action(Request $request)
     {
-      if ($request->ajax()) {
+        if ($request->ajax()) {
+            $query = $request->get('query');
+            $query1 = $request->get('query1');
 
-        // $items = DB::table('items')
-        // ->join('categories', 'items.category_id', '=', 'category.id')
-        // ->where('categories.aisle','=','query1')
-        // ->select('users.*', 'contacts.phone', 'orders.price')
-        // ->get();
-        $aisle = [];
-        $categories = Category::all();
-        foreach($categories as $category){
-            array_push($aisle,$category->aisle);
+            if ($query == '' || $query1 == '') {
+                if ($query != '') {
+                    $data = DB::table('items')
+                        ->join('categories', 'items.category_id', '=', 'categories.id')
+                        ->where('items.price', '>', $query)
+                        ->select('items.id', 'items.name', 'items.price', 'categories.name AS c_name', 'categories.aisle')
+                        ->get();;
+                } elseif ($query1 != '') {
+                    $data = DB::table('items')
+                        ->join('categories', 'items.category_id', '=', 'categories.id')
+                        ->where('categories.aisle', '=', $query1)
+                        ->select('items.id', 'items.name', 'items.price', 'categories.name AS c_name', 'categories.aisle')
+                        ->get();
+                } else {
+                    $data = DB::table('items')
+                        ->join('categories', 'items.category_id', '=', 'categories.id')
+                        ->select('items.id', 'items.name', 'items.price', 'categories.name AS c_name', 'categories.aisle')
+                        ->get();;
+                }
+            } else {
+                $data = DB::table('items')
+                    ->join('categories', 'items.category_id', '=', 'categories.id')
+                    ->where('categories.aisle', '=', $query1)
+                    ->where('items.price', '>', $query)
+                    ->select('items.id', 'items.name', 'items.price', 'categories.name AS c_name', 'categories.aisle')
+                    ->get();;
+            }
+            $aisle = [];
+            $categories = Category::all();
+            foreach ($categories as $category) {
+                array_push($aisle, $category->aisle);
+            }
+            $aisle = array_unique($aisle);
+            sort($aisle);
+            $aisle_output = null;
+            foreach ($aisle as $i) {
+                if ($i == $query1) {
+                    $aisle_output .= '<option selected="selected">' . $i . '</option>' . '<br>';
+                } else {
+                    $aisle_output .= '<option>' . $i . '</option>' . '<br>';
+                }
+            }
+            $output = '';
+
+            $total_row = $data->count();
+            if ($total_row > 0) {
+                foreach ($data as $row) {
+                    $output .= '
+                    <tr id=product' . $row->id . ' class="active">
+                    <td>' . $row->id . '</td>
+                    <td>' . $row->name . '</td>
+                    <td>' . $row->price . '</td>
+                    <td>' . $row->c_name . '</td>
+                    <td>' . $row->aisle . '</td>
+
+                    <td width="35%">
+                    <button class="btn btn-warning btn-detail open_modal" value=' . $row->id . '>Edit</button>
+                    <button class="btn btn-danger btn-delete delete-product" value=' . $row->id . '>Delete</button>
+                    </td>
+                    </tr>';
+                }
+            } else {
+                $output = '
+                <tr>
+                <td align="center" colspan="5">No Data Found</td>
+                </tr>';
+            }
+            $data = array(
+                'table_data'  => $output,
+                'aisles' => $aisle_output,
+            );
+
+            return response()->json($data);
         }
-        $aisle = array_unique($aisle);
-        sort($aisle);
-        $aisle_output=null;
-        foreach($aisle as $i){
-            $aisle_output.='<option>'.$i.'</option>'.'<br>';
-        }
-        $output = '';
-        $query = $request->get('query');
-        if ($query != '') {
-          $data = DB::table('items')
-            ->where('price', '>', $query)
-            // ->orWhere('price', 'like', '%' . $query . '%')
-            //  ->orderBy('CustomerID', 'desc')
-            ->get();
-        } else {
-          $data = DB::table('items')
-            //  ->orderBy('CustomerID', 'desc')
-            ->get();
-        }
-        $total_row = $data->count();
-        if ($total_row > 0) {
-          foreach ($data as $row) {
-            $output .= '
-          <tr id=product'.$row->id.' class="active">
-           <td>' . $row->name . '</td>
-           <td>' . $row->price . '</td>
-           <td width="35%">
-           <button class="btn btn-warning btn-detail open_modal" value='.$row->id.'>Edit</button>
-           <button class="btn btn-danger btn-delete delete-product" value='.$row->id.'>Delete</button>
-       </td>
-          </tr>
-          ';
-          }
-        } else {
-          $output = '
-         <tr>
-          <td align="center" colspan="5">No Data Found</td>
-         </tr>
-         ';
-        }
-        $data = array(
-          'table_data'  => $output,
-          'total_data'  => $total_row,
-          'aisles' => $aisle_output,
-        );
-  
-        echo json_encode($data);
-      }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $item = Item::create($request->input());
         return response()->json($item);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Item $item)
     {
-
         return response()->json($item);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Item $item)
     {
         return response()->json($item);
-
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Item $item)
     {
         $item->name = $request->name;
@@ -171,12 +132,7 @@ class ItemController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Item $item)
     {
         $item->delete();

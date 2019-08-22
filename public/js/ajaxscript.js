@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     //get base URL *********************
     var url = $('#url').val();
-
+    ;
 
     //display modal form for creating new product *********************
     $('#btn_add').click(function () {
@@ -20,7 +20,7 @@ $(document).ready(function () {
         // Populate Data in Edit Modal Form
         $.ajax({
             type: "GET",
-            url: url + '/' + product_id+'/edit',
+            url: url + '/' + product_id + '/edit',
             success: function (data) {
 
                 $('#product_id').val(data.id);
@@ -109,33 +109,36 @@ $(document).ready(function () {
     });
 
 
-    fetch_customer_data();
+    fetch_grocery_data();
 
-    var query = null;
-    var query1 = null;
-    function fetch_customer_data(query = '',query1 = ''){
-    var my_url = $('#url').val();
+    function fetch_grocery_data(query, query1) {
+        var my_url = $('#url').val();
 
-    $.ajax({
-      url: my_url+'/action',
-      method:'GET',
-      data:{query:query,query1:query1},
-      dataType:'json',
-      success:function(data)
-      {
-       $('#products-list').html(data.table_data);
-       $('#sel1').html(data.aisles);
-      }
-     })
+        $.ajax({
+            url: my_url + '/action',
+            method: 'GET',
+            data: { query: query, query1: query1 },
+            dataType: 'json',
+            success: function (data) {
+                $('#products-list').html(data.table_data);
+                $('#sel1').html(data.aisles);
+            }
+        })
     }
-   
-    $(document).on('keyup', '#search', function(){
-     var query = $(this).val();
-     fetch_customer_data(query,query1);
+
+    $(document).on('keyup', '#search', function () {
+        if (typeof query1 === 'undefined') {
+            query1 = '';
+        }
+        query = $(this).val();
+        fetch_grocery_data(query, query1);
     });
 
-    $(document).on('change', '#sel1', function(){
-        var query1 = $(this).val();
-        fetch_customer_data(query,query1);
-       });
+    $(document).on('change', '#sel1', function () {
+        if (typeof query === 'undefined') {
+            query = '';
+        }
+        query1 = $(this).val();
+        fetch_grocery_data(query, query1);
+    });
 });
